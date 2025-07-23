@@ -229,21 +229,9 @@ end
 local rtp = vim.opt.rtp
 rtp:prepend(lazypath)
 
-plugins_i_want = {
-  "nvim-lint",
-  "tokyonight",
-  "whichkey",
-  "gitsigns",
-  "nvim-tree",
-  "copilot.vim",
-  "telescope",
-  "blink.cmp",
-  "conform.nvim",
-}
-
 require("lazy").setup({
 
-  {                -- Colorscheme
+  {                  -- Colorscheme
     "shaunsingh/nord.nvim",
     priority = 1000, -- Make sure to load this before all the other start plugins.
     config = function()
@@ -257,7 +245,7 @@ require("lazy").setup({
 
   "NMAC427/guess-indent.nvim", -- Detect tabstop and shiftwidth automatically
 
-  {                           -- Adds git related signs to the gutter, as well as utilities for managing changes
+  {                            -- Adds git related signs to the gutter, as well as utilities for managing changes
     "lewis6991/gitsigns.nvim",
     opts = {
       signs = {
@@ -280,15 +268,15 @@ require("lazy").setup({
       vim.g.copilot_no_tab_map = true
     end,
   },
-  require("plugins.which-key"),   -- keybinds helper     TODO: remove this when comfortable
-  require("plugins.nvim-tree"),   -- sidebar file explorer
-  require("plugins.telescope"),   -- fuzzy finder
-  require("plugins.lsp"),         -- LSP Configuration
-  require("plugins.conform"),     -- Autoformatting
+  require("plugins.which-key"),    -- keybinds helper     TODO: remove this when comfortable
+  require("plugins.nvim-tree"),    -- sidebar file explorer
+  require("plugins.telescope"),    -- fuzzy finder
+  require("plugins.lsp"),          -- LSP Configuration
+  require("plugins.conform"),      -- Autoformatting
   require("plugins.autocomplete"), -- Autocompletion
   require("plugins.mini"),
-  require("plugins.treesitter"),  -- Treesitter config
-  require("plugins.lint"),        -- Linting
+  require("plugins.treesitter"),   -- Treesitter config
+  require("plugins.lint"),         -- Linting
 
   -- require 'kickstart.plugins.debug',
   -- require 'kickstart.plugins.indent_line',
