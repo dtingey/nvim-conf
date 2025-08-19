@@ -277,6 +277,7 @@ require("lazy").setup({
   require("plugins.mini"),
   require("plugins.treesitter"),   -- Treesitter config
   require("plugins.lint"),         -- Linting
+  require("plugins.debug"),        -- Debugging
 
   -- require 'kickstart.plugins.debug',
   -- require 'kickstart.plugins.indent_line',
