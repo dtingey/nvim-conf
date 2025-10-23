@@ -231,6 +231,15 @@ rtp:prepend(lazypath)
 
 require("lazy").setup({
 
+  { -- Rocq proof assistant
+    "whonore/Coqtail",
+    config = function()
+      vim.g.python3_host_prog = '/Users/damontingey/.pyenv/shims/python'
+      vim.g.coqtail_noimap = true
+    end
+  },
+
+
   {                  -- Colorscheme
     "shaunsingh/nord.nvim",
     priority = 1000, -- Make sure to load this before all the other start plugins.

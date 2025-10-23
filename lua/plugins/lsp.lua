@@ -171,21 +171,35 @@ return {
             },
           },
         },
-        -- ruff = {
-        -- 	init_options = {
-        -- 		settings = {
-        -- 			configuration = "~/zontal/tools/ruff.toml",
-        -- 		},
-        -- 	},
-        -- },
+        ruff = {
+          init_options = {
+            settings = {
+              configuration = "~/zontal/tools/ruff.toml",
+            },
+          },
+        },
         -- mypy = {},
         -- -- clangd = {},
         -- -- gopls = {},
         -- -- pyright = {},
         -- -- rust_analyzer = {},
+        -- rust_analyzer = {
+        --   cmd = { "verus-analyzer" },
+        --   filetypes = { "rust" },
+        -- },
+        -- verus_analyzer = {
+        --   cmd = { "verus-analyzer" },
+        --   filetypes = { "rust" },
+        --   -- root_dir = require("lspconfig.util").root_pattern("Cargo.toml", ".git", "build.rs"),
+        --   settings = {},
+        -- },
+        rust_analyzer = {
+          cmd = { "verus-analyzer" },
+        },
         elixirls = {
           cmd = { "elixir-ls" },
         },
+        gleam = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
         -- Some languages (like typescript) have entire language plugins that can be useful:
