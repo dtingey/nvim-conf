@@ -150,11 +150,35 @@ vim.keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" }
 -- ============================================================================
 
 -- Copy Full File-Path
-vim.keymap.set("n", "<leader>pa", function()
-  local path = vim.fn.expand("%:p")
-  vim.fn.setreg("+", path)
-  print("file:", path)
-end)
+-- vim.keymap.set("n", "<leader>pa", function()
+--   local path = vim.fn.expand("%:p")
+--   vim.fn.setreg("+", path)
+--   print("file:", path)
+-- end)
+
+-- Toggle wrap + linebreak + j/k behavior
+local wrap_enabled = false
+
+function ToggleWrapMode()
+  wrap_enabled = not wrap_enabled
+
+  if wrap_enabled then
+    vim.opt.wrap = true
+    vim.opt.linebreak = true
+
+    vim.keymap.set('n', 'j', 'gj', { noremap = true, silent = true })
+    vim.keymap.set('n', 'k', 'gk', { noremap = true, silent = true })
+  else
+    vim.opt.wrap = false
+    vim.opt.linebreak = false
+
+    vim.keymap.set('n', 'j', 'j', { noremap = true, silent = true })
+    vim.keymap.set('n', 'k', 'k', { noremap = true, silent = true })
+  end
+end
+
+-- Optional keybinding to toggle
+vim.keymap.set('n', '<leader>w', ToggleWrapMode, { noremap = true, silent = true })
 
 -- Autocommands
 
@@ -312,6 +336,121 @@ require("lazy").setup({
   --     vim.keymap.set('n', '-', '<C-x>', { desc = 'Decrement', noremap = true })
   --   end,
   -- },
+  --
+  {
+    "folke/snacks.nvim",
+    priority = 1000,
+    lazy = false,
+    ---@type snacks.Config
+    opts = {
+      bigfile = { enabled = true },
+      explorer = { enabled = true },
+      notifier = {
+        enabled = true,
+        timeout = 3000,
+      },
+      quickfile = { enabled = true },
+    },
+    keys = {
+      { "<leader>te", function() Snacks.explorer() end, desc = "File Explorer" },
+      { "<leader>z",  function() Snacks.zen() end,      desc = "Toggle Zen Mode" },
+      { "<leader>Z",  function() Snacks.zen.zoom() end, desc = "Toggle Zoom" },
+    },
+    init = function()
+      vim.api.nvim_create_autocmd("User", {
+        pattern = "VeryLazy",
+        callback = function()
+          -- Setup some globals for debugging (lazy-loaded)
+          _G.dd = function(...)
+            Snacks.debug.inspect(...)
+          end
+          _G.bt = function()
+            Snacks.debug.backtrace()
+          end
+
+          -- Override print to use snacks for `:=` command
+          if vim.fn.has("nvim-0.11") == 1 then
+            vim._print = function(_, ...)
+              dd(...)
+            end
+          else
+            vim.print = _G.dd
+          end
+
+          -- Create some toggle mappings
+          Snacks.toggle.option("spell", { name = "Spelling" }):map("<leader>ts")
+          Snacks.toggle.option("wrap", { name = "Wrap" }):map("<leader>tw")
+          Snacks.toggle.option("relativenumber", { name = "Relative Number" }):map("<leader>tL")
+          Snacks.toggle.diagnostics():map("<leader>td")
+          Snacks.toggle.line_number():map("<leader>tl")
+          Snacks.toggle.option("conceallevel", { off = 0, on = vim.o.conceallevel > 0 and vim.o.conceallevel or 2 }):map(
+            "<leader>tc")
+          Snacks.toggle.treesitter():map("<leader>tT")
+          Snacks.toggle.option("background", { off = "light", on = "dark", name = "Dark Background" }):map("<leader>tb")
+          Snacks.toggle.inlay_hints():map("<leader>th")
+          Snacks.toggle.indent():map("<leader>tg")
+          Snacks.toggle.dim():map("<leader>tD")
+        end,
+      })
+    end,
+  },
+
+  {
+    "carderne/pi-nvim",
+    config = function()
+      require("pi-nvim").setup()
+    end,
+  },
+
+  {
+    "nicolasgb/jj.nvim",
+    -- version = "*", -- Use latest stable release
+    -- Or from the main branch (uncomment the branch line and comment the version line)
+    -- branch = "main",
+    dependencies = {
+      "folke/snacks.nvim", -- Optional, only needed if you use pickers
+    },
+    config = function()
+      require("jj").setup({})
+
+      -- Core commands
+      local cmd = require("jj.cmd")
+      vim.keymap.set("n", "<leader>jd", cmd.describe, { desc = "JJ describe" })
+      vim.keymap.set("n", "<leader>jl", cmd.log, { desc = "JJ log" })
+      vim.keymap.set("n", "<leader>je", cmd.edit, { desc = "JJ edit" })
+      vim.keymap.set("n", "<leader>jn", cmd.new, { desc = "JJ new" })
+      vim.keymap.set("n", "<leader>js", cmd.status, { desc = "JJ status" })
+      vim.keymap.set("n", "<leader>sj", cmd.squash, { desc = "JJ squash" })
+      vim.keymap.set("n", "<leader>ju", cmd.undo, { desc = "JJ undo" })
+      vim.keymap.set("n", "<leader>jy", cmd.redo, { desc = "JJ redo" })
+      vim.keymap.set("n", "<leader>jr", cmd.rebase, { desc = "JJ rebase" })
+      vim.keymap.set("n", "<leader>jbc", cmd.bookmark_create, { desc = "JJ bookmark create" })
+      vim.keymap.set("n", "<leader>jbd", cmd.bookmark_delete, { desc = "JJ bookmark delete" })
+      vim.keymap.set("n", "<leader>jbm", cmd.bookmark_move, { desc = "JJ bookmark move" })
+      vim.keymap.set("n", "<leader>jts", cmd.tag_set, { desc = "JJ tag set" })
+      vim.keymap.set("n", "<leader>jtd", cmd.tag_delete, { desc = "JJ tag delete" })
+      vim.keymap.set("n", "<leader>jtp", cmd.tag_push, { desc = "JJ tag push" })
+      vim.keymap.set("n", "<leader>ja", cmd.abandon, { desc = "JJ abandon" })
+      vim.keymap.set("n", "<leader>jf", cmd.fetch, { desc = "JJ fetch" })
+      vim.keymap.set("n", "<leader>jp", cmd.push, { desc = "JJ push" })
+      vim.keymap.set("n", "<leader>jpr", cmd.open_pr, { desc = "JJ open PR from bookmark in current revision or parent" })
+      vim.keymap.set("n", "<leader>jpl", function()
+        cmd.open_pr { list_bookmarks = true }
+      end, { desc = "JJ open PR listing available bookmarks" })
+
+
+      -- Diff commands
+      local diff = require("jj.diff")
+      vim.keymap.set("n", "<leader>df", function() diff.open_vdiff() end, { desc = "JJ diff current buffer" })
+      vim.keymap.set("n", "<leader>dF", function() diff.open_hdiff() end, { desc = "JJ hdiff current buffer" })
+
+      -- This is an alias i use for moving bookmarks its so good
+      vim.keymap.set("n", "<leader>jt", function()
+        cmd.j "tug"
+        cmd.log {}
+      end, { desc = "JJ tug" })
+    end,
+  },
 
   require("plugins.which-key"),    -- keybinds helper     TODO: remove this when comfortable
   require("plugins.nvim-tree"),    -- sidebar file explorer

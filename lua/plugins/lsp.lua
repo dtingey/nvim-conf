@@ -201,6 +201,10 @@ return {
           cmd = { "elixir-ls" },
         },
         gleam = {},
+        ts_ls = {},
+        svelte = {},
+        ols = {},
+        tinymist = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
         -- Some languages (like typescript) have entire language plugins that can be useful:
@@ -228,7 +232,7 @@ return {
 
       for server_name, server_config in pairs(servers) do
         vim.lsp.config(server_name, server_config)
-        -- require("lspconfig")[server_name].setup(server_config)
+        require("lspconfig")[server_name].setup(server_config)
       end
     end,
   },
